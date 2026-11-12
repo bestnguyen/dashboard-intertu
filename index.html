@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bảng điều hành trung tâm Anh ngữ 1 kèm 1 (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f7;--panel:#fff;--ink:#14212b;--mute:#5d6b76;--line:#dbe1e6;--brand:#0f5c6e;--brand-2:#e0eef1;--warn:#b86a00;--warn-bg:#fff1dc;--bad:#b3261e;--bad-bg:#fde8e6;--ok:#1b7a43;--ok-bg:#e1f3e8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181e;--panel:#18232b;--ink:#e6edf1;--mute:#93a3ae;--line:#2a3943;--brand:#5fc0d4;--brand-2:#1d3640;--warn:#f0b35a;--warn-bg:#3a2c14;--bad:#f1948d;--bad-bg:#40201d;--ok:#6fd199;--ok-bg:#183626}}
+:root[data-theme="dark"]{--bg:#10181e;--panel:#18232b;--ink:#e6edf1;--mute:#93a3ae;--line:#2a3943;--brand:#5fc0d4;--brand-2:#1d3640;--warn:#f0b35a;--warn-bg:#3a2c14;--bad:#f1948d;--bad-bg:#40201d;--ok:#6fd199;--ok-bg:#183626}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:16px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
+h1{font-size:18px;margin:0;font-weight:700}
+header small{color:var(--mute);display:block;font-weight:400;font-size:13px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav a{padding:8px 14px;border-radius:8px;color:var(--mute);text-decoration:none;font-weight:500}
+nav a:hover{background:var(--brand-2);color:var(--ink)}
+nav a.on{background:var(--brand);color:#fff}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+@media (prefers-color-scheme:dark){nav a.on{color:#10181e}}
+:root[data-theme="dark"] nav a.on{color:#10181e}
+main{max-width:1180px;margin:0 auto;padding:24px}
+section{display:none}section.on{display:block}
+h2{font-size:20px;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 20px;max-width:70ch}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.panel h3{margin:0 0 12px;font-size:15px}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:16px}
+.kpi b{display:block;font-size:26px;font-weight:700;line-height:1.2}
+.kpi span{color:var(--mute);font-size:13px}
+.kpi em{font-style:normal;font-size:12px;font-weight:600;margin-left:6px}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.two{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+@media (max-width:860px){.two{grid-template-columns:1fr}header{padding:12px 16px}main{padding:16px}}
+.funnel .row{display:grid;grid-template-columns:96px 1fr 88px;gap:10px;align-items:center;margin:10px 0}
+.funnel .bar{height:30px;background:var(--brand);border-radius:6px;min-width:4px}
+.funnel .row:nth-child(2) .bar{opacity:.85}.funnel .row:nth-child(3) .bar{opacity:.7}.funnel .row:nth-child(4) .bar{opacity:.55}
+.funnel small{color:var(--mute)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mute);font-weight:600;font-size:13px}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.t-ok{background:var(--ok-bg);color:var(--ok)}.t-warn{background:var(--warn-bg);color:var(--warn)}.t-bad{background:var(--bad-bg);color:var(--bad)}.t-n{background:var(--brand-2);color:var(--brand)}
+.meter{width:110px;height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle}
+.meter i{display:block;height:100%;background:var(--brand)}
+.meter i.low{background:var(--bad)}
+.alerts{list-style:none;margin:0;padding:0}
+.alerts li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.alerts li:last-child{border:0}
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--brand-2);border-radius:10px;padding:10px}
+.col h3{font-size:14px;margin:2px 4px 10px;display:flex;justify-content:space-between}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:14px}
+.card small{display:block;color:var(--mute)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+input,select{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+button{font:inherit;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}
+button:hover{background:var(--brand-2)}
+.checks label{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.checks input{width:18px;height:18px;padding:0;margin-top:3px}
+.checks input:checked+span{text-decoration:line-through;color:var(--mute)}
+.modules{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.modules ul{margin:0;padding-left:18px;color:var(--mute)}
+footer{max-width:1180px;margin:0 auto;padding:8px 24px 32px;color:var(--mute);font-size:13px}
+svg text{fill:var(--mute);font:12px "Be Vietnam Pro",system-ui,sans-serif}
+@media (prefers-reduced-motion:no-preference){.funnel .bar{transition:width .6s ease}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bảng điều hành trung tâm Anh ngữ 1 kèm 1<small>Prototype CRM + SIS, HRM, vận hành nội bộ. Dữ liệu mẫu, không phải dữ liệu thật.</small></h1>
+  <nav id="nav" aria-label="Chức năng">
+    <a href="#dashboard">Chỉ số kinh doanh</a>
+    <a href="#crm">CRM</a>
+    <a href="#sis">Học viên</a>
+    <a href="#hrm">Nhân sự</a>
+    <a href="#ops">Vận hành</a>
+  </nav>
+</header>
+<main>
+
+<section id="dashboard">
+  <h2>Chỉ số kinh doanh tháng 10/2026</h2>
+  <p class="sub">CEO xem được tình hình trong một màn hình: tiền vào bao nhiêu, học viên nào sắp rời đi, giáo viên nào đang quá tải.</p>
+  <div class="grid kpis" id="kpis"></div>
+  <div class="grid two">
+    <div class="panel funnel"><h3>Từ khách tiềm năng đến đóng phí</h3><div id="funnel"></div></div>
+    <div class="panel"><h3>Cần xử lý hôm nay</h3>
+      <ul class="alerts">
+        <li><span class="tag t-bad">Gấp</span><span>7 học viên còn dưới 3 buổi, chưa gia hạn. Tư vấn gọi trong hôm nay.</span></li>
+        <li><span class="tag t-warn">Chú ý</span><span>4 học viên vắng 2 buổi liên tiếp. Giáo viên chủ nhiệm liên hệ phụ huynh.</span></li>
+        <li><span class="tag t-warn">Chú ý</span><span>Giáo viên Hạnh dạy 92% khung giờ, cần chia bớt lớp mới.</span></li>
+        <li><span class="tag t-n">Nhắc</span><span>12 khách học thử chưa được gọi lại sau 48 giờ.</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <div class="panel"><h3>Doanh thu thực thu 6 tháng (triệu đồng)</h3><div id="rev"></div></div>
+    <div class="panel"><h3>Cách tính chỉ số</h3>
+      <div class="scroll"><table>
+        <tr><th>Chỉ số</th><th>Công thức</th></tr>
+        <tr><td>Tỷ lệ chốt</td><td>Đóng phí / Khách tiềm năng</td></tr>
+        <tr><td>Tỷ lệ gia hạn</td><td>Gia hạn / Gói hết hạn trong tháng</td></tr>
+        <tr><td>Lấp giờ giáo viên</td><td>Giờ có học viên / Giờ mở lịch</td></tr>
+        <tr><td>Nợ buổi học</td><td>Số buổi đã thu tiền, chưa dạy</td></tr>
+        <tr><td>Chi phí thu hút học viên</td><td>Chi phí marketing / Đóng phí mới</td></tr>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<section id="crm">
+  <h2>CRM: hành trình khách hàng</h2>
+  <p class="sub">Mỗi khách tiềm năng có một người phụ trách và một bước tiếp theo. Kéo thả sẽ làm ở bản chính thức, prototype chỉ hiển thị.</p>
+  <div class="kanban" id="kanban"></div>
+</section>
+
+<section id="sis">
+  <h2>Hồ sơ học viên</h2>
+  <p class="sub">Một hồ sơ gồm gói học, số buổi còn lại, giáo viên, mục tiêu và tình trạng đi học.</p>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Tìm theo tên học viên hoặc giáo viên" aria-label="Tìm học viên" style="min-width:260px">
+    <select id="f" aria-label="Lọc tình trạng"><option value="">Tất cả tình trạng</option><option>Đang học</option><option>Sắp hết buổi</option><option>Nguy cơ nghỉ</option></select>
+  </div>
+  <div class="panel scroll"><table id="stu"></table></div>
+</section>
+
+<section id="hrm">
+  <h2>Nhân sự và giáo viên</h2>
+  <p class="sub">Theo dõi khung giờ, chất lượng dạy và hợp đồng của từng giáo viên để xếp lớp đúng người, đúng giờ.</p>
+  <div class="panel scroll"><table id="tch"></table></div>
+  <div class="grid modules" style="margin-top:16px">
+    <div class="panel"><h3>Lương theo giờ dạy</h3><ul><li>Tự tính từ buổi đã dạy được xác nhận</li><li>Khấu trừ buổi nghỉ không báo trước</li><li>Xuất bảng lương theo tháng</li></ul></div>
+    <div class="panel"><h3>Đánh giá giáo viên</h3><ul><li>Điểm học viên chấm sau mỗi 8 buổi</li><li>Dự giờ hằng quý</li><li>Tỷ lệ học viên gia hạn theo giáo viên</li></ul></div>
+  </div>
+</section>
+
+<section id="ops">
+  <h2>Vận hành nội bộ</h2>
+  <p class="sub">Công việc lặp lại hằng ngày được gắn người phụ trách và nhắc tự động.</p>
+  <div class="grid two">
+    <div class="panel checks"><h3>Việc hôm nay</h3><div id="todo"></div></div>
+    <div class="panel"><h3>Các phân hệ của hệ thống</h3>
+      <div class="grid modules" style="grid-template-columns:1fr">
+        <div><b>CRM</b><ul><li>Khách tiềm năng, lịch tư vấn, học thử</li><li>Báo giá, hợp đồng, thu phí</li></ul></div>
+        <div><b>SIS</b><ul><li>Hồ sơ, gói học, lịch học, điểm danh</li><li>Nhận xét buổi học, báo cáo cho phụ huynh</li></ul></div>
+        <div><b>HRM</b><ul><li>Giáo viên, tư vấn viên, hợp đồng</li><li>Chấm công, lương, đánh giá</li></ul></div>
+        <div><b>Quản trị</b><ul><li>Phân quyền theo vai trò, nhật ký thao tác</li><li>Dashboard và xuất báo cáo</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>Prototype tĩnh bằng HTML, CSS và JavaScript, không cần máy chủ. Có thể đăng lên GitHub Pages để xem thử.</footer>
+
+<script>
+var KPI=[["Doanh thu thực thu","412 triệu","+8,4%",1],["Học viên đang học","186","+12",1],["Tỷ lệ chốt","22,9%","+1,8 điểm",1],["Tỷ lệ gia hạn","64%","-3 điểm",0],["Lấp giờ giáo viên","78%","+2 điểm",1],["Nợ buổi học","2.940 buổi","+140",0]];
+var FUN=[["Khách tiềm năng",420],["Đã tư vấn",260],["Học thử",168],["Đóng phí",96]];
+var REV=[["T5",318],["T6",335],["T7",361],["T8",389],["T9",380],["T10",412]];
+var KAN=[["Mới",[["Lan Anh (IELTS 6.5)","Từ Facebook, chưa gọi"],["Minh Quân (lớp 9)","Giới thiệu, hẹn gọi 15h"]]],
+["Đã tư vấn",[["Thu Hà (giao tiếp)","Chờ xếp lịch học thử"],["Đức Anh (du học)","Gửi báo giá hôm qua"]]],
+["Học thử",[["Bảo Châu (lớp 6)","Học thử 14/11 với cô Hạnh"],["Hoàng Nam (đi làm)","Đã học, chờ phản hồi"]]],
+["Chờ đóng phí",[["Khánh Linh (IELTS 7.0)","Đã xin trả góp 2 đợt"]]],
+["Đã đóng phí",[["Gia Huy (lớp 8)","Gói 48 buổi, bắt đầu 18/11"],["Ngọc Mai (giao tiếp)","Gói 24 buổi, xếp xong lịch"]]]];
+var STU=[["Nguyễn Gia Hân","IELTS 6.5","Hạnh",33,48,"Đang học"],["Trần Minh Khôi","Giao tiếp","Tú",2,24,"Sắp hết buổi"],["Lê Bảo Ngọc","Lớp 8","Hạnh",19,36,"Đang học"],["Phạm Đức Long","IELTS 7.0","Vy",11,48,"Nguy cơ nghỉ"],["Vũ Thanh Tâm","Giao tiếp","Tú",1,24,"Sắp hết buổi"],["Đỗ Hải Yến","Lớp 6","Vy",28,36,"Đang học"]];
+var TCH=[["Hạnh","IELTS, thiếu niên",92,4.8,"Toàn thời gian","12/2026"],["Tú","Giao tiếp",81,4.6,"Toàn thời gian","06/2027"],["Vy","Thiếu nhi, IELTS",68,4.7,"Bán thời gian","03/2027"],["Dương","Giao tiếp",54,4.3,"Bán thời gian","12/2026"]];
+var TODO=["Gọi lại 12 khách học thử quá 48 giờ","Xác nhận lịch học ngày mai với giáo viên","Gửi nhắc gia hạn cho 7 học viên dưới 3 buổi","Đối soát thu tiền cuối ngày với kế toán","Duyệt nhận xét buổi học chờ gửi phụ huynh"];
+var $=function(s){return document.querySelector(s)};
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+$("#kpis").innerHTML=KPI.map(function(k){return '<div class="panel kpi"><span>'+k[0]+'</span><b>'+k[1]+'</b><span class="'+(k[3]?"up":"down")+'">'+k[2]+' so với tháng trước</span></div>'}).join("");
+
+$("#funnel").innerHTML=FUN.map(function(r,i){var w=Math.round(r[1]/FUN[0][1]*100);var c=i?Math.round(r[1]/FUN[i-1][1]*100)+"% từ bước trước":"";return '<div class="row"><span>'+r[0]+'</span><div><div class="bar" style="width:'+w+'%"></div><small>'+c+'</small></div><b>'+r[1]+'</b></div>'}).join("");
+
+(function(){var W=520,H=210,p=30,max=450,bw=44,g=(W-p*2-bw*REV.length)/(REV.length-1),s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Doanh thu 6 tháng" style="width:100%;height:auto">';
+REV.forEach(function(r,i){var h=r[1]/max*(H-p-20),x=p+i*(bw+g),y=H-p-h;s+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="4" fill="var(--brand)" opacity="'+(i==REV.length-1?1:.45)+'"/><text x="'+(x+bw/2)+'" y="'+(y-6)+'" text-anchor="middle">'+r[1]+'</text><text x="'+(x+bw/2)+'" y="'+(H-10)+'" text-anchor="middle">'+r[0]+'</text>'});
+$("#rev").innerHTML=s+'</svg>'})();
+
+$("#kanban").innerHTML=KAN.map(function(c){return '<div class="col"><h3>'+c[0]+'<span>'+c[1].length+'</span></h3>'+c[1].map(function(x){return '<div class="card">'+esc(x[0])+'<small>'+esc(x[1])+'</small></div>'}).join("")+'</div>'}).join("");
+
+function tagFor(s){return '<span class="tag '+(s=="Đang học"?"t-ok":s=="Sắp hết buổi"?"t-warn":"t-bad")+'">'+s+'</span>'}
+function drawStu(){var q=$("#q").value.toLowerCase(),f=$("#f").value;
+var rows=STU.filter(function(r){return (!f||r[5]==f)&&(r[0]+" "+r[2]).toLowerCase().indexOf(q)>-1});
+$("#stu").innerHTML='<tr><th>Học viên</th><th>Chương trình</th><th>Giáo viên</th><th>Buổi còn lại</th><th>Tình trạng</th></tr>'+(rows.length?rows.map(function(r){var pc=Math.round(r[3]/r[4]*100);return '<tr><td>'+esc(r[0])+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td><span class="meter"><i class="'+(pc<15?"low":"")+'" style="width:'+pc+'%"></i></span> '+r[3]+'/'+r[4]+'</td><td>'+tagFor(r[5])+'</td></tr>'}).join(""):'<tr><td colspan="5">Không có học viên phù hợp. Thử bỏ bộ lọc.</td></tr>')}
+$("#q").oninput=drawStu;$("#f").onchange=drawStu;drawStu();
+
+$("#tch").innerHTML='<tr><th>Giáo viên</th><th>Thế mạnh</th><th>Lấp giờ</th><th>Điểm học viên</th><th>Hợp đồng</th><th>Hết hạn</th></tr>'+TCH.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><span class="meter"><i style="width:'+r[2]+'%"></i></span> '+r[2]+'%</td><td>'+String(r[3]).replace(".",",")+'/5</td><td>'+r[4]+'</td><td>'+r[5]+'</td></tr>'}).join("");
+
+$("#todo").innerHTML=TODO.map(function(t){return '<label><input type="checkbox"><span>'+t+'</span></label>'}).join("");
+
+function route(){var h=(location.hash||"#dashboard").slice(1);if(!document.getElementById(h))h="dashboard";
+document.querySelectorAll("section").forEach(function(s){s.classList.toggle("on",s.id==h)});
+document.querySelectorAll("#nav a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")=="#"+h)})}
+window.addEventListener("hashchange",route);route();
+</script>
+</body>
+</html>
